@@ -19,9 +19,15 @@ int execute(char **args)
     pid_t pid;
     int status;
 
+    /* Vérification des arguments */
+    if (!args || !args[0])
+    {
+        fprintf(stderr, "Erreur : Aucun argument fourni à execute\n");
+        return (-1);
+    }
+
     /* Création du processus enfant */
     pid = fork();
-
     if (pid < 0) /* Gestion d'erreur pour fork() */
     {
         perror("Erreur lors de la création du processus");
@@ -30,16 +36,21 @@ int execute(char **args)
 
     if (pid == 0) /* Processus enfant */
     {
-        if (execve(args[0], args, environ) == -1) /* Exécute la commande */
+        /* Exécution de la commande */
+        if (execve(args[0], args, environ) == -1)
         {
             perror("Erreur lors de l'exécution de la commande");
-            exit(EXIT_FAILURE); /* Quitte le processus enfant si execve échoue */
+            exit(127); /* Code de retour standard pour commande non trouvée */
         }
     }
     else /* Processus parent */
     {
         /* Attente de la fin du processus enfant */
-        wait(&status);
+        if (wait(&status) == -1)
+        {
+            perror("Erreur lors de l'attente du processus enfant");
+            return (-1);
+        }
 
         /* Retourne le code de sortie du processus enfant */
         if (WIFEXITED(status))
