@@ -3,38 +3,65 @@
 #include <stdio.h>
 #include "main.h"
 
+/**
+ * split_line - Fonction pour diviser une chaîne de caractères en un tableau de mots (tokens).
+ * @line: La chaîne de caractères à diviser.
+ *
+ * Retourne un tableau de pointeurs sur les mots, terminé par NULL.
+ */
 char **split_line(char *line)
 {
-    char **args = NULL;
-    char *token;
-    size_t bufsize = 64, i = 0;
+    char **words = NULL; /* Tableau pour stocker les mots */
+    char *current_word;  /* Contient temporairement chaque mot extrait */
+    char **reallocated_words; /* Utilisé pour la réallocation */
+    size_t buffer_size = 64, word_count = 0; /* Taille initiale du tableau et compteur de mots */
 
-    args = malloc(bufsize * sizeof(char *));
-    if (!args)
+    /* Allocation initiale du tableau */
+    words = malloc(buffer_size * sizeof(char *));
+    if (!words) /* Vérification de l'allocation mémoire */
     {
         perror("Erreur d'allocation mémoire");
         return (NULL);
     }
 
-    token = strtok(line, " ");
-    while (token)
+    /* Division de la ligne en mots, en utilisant l'espace comme délimiteur */
+    current_word = strtok(line, " ");
+    while (current_word)
     {
-        args[i++] = token;
-
-        if (i >= bufsize)
+        /* Duplication du mot extrait pour le stocker indépendamment */
+        words[word_count] = strdup(current_word);
+        if (!words[word_count]) /* Vérification de l'allocation mémoire pour chaque mot */
         {
-            bufsize += 64;
-            args = realloc(args, bufsize * sizeof(char *));
-            if (!args)
-            {
-                perror("Erreur de réallocation mémoire");
-                return (NULL);
-            }
+            perror("Erreur d'allocation mémoire");
+            /* Libération de la mémoire déjà allouée en cas d'erreur */
+            while (word_count > 0)
+                free(words[--word_count]);
+            free(words);
+            return (NULL);
         }
 
-        token = strtok(NULL, " ");
-    }
-    args[i] = NULL;
+        word_count++; /* Incrément du compteur de mots */
 
-    return (args);
+        /* Vérification si le tableau doit être agrandi */
+        if (word_count >= buffer_size)
+        {
+            buffer_size += 64; /* Augmentation de la taille du tableau */
+            reallocated_words = realloc(words, buffer_size * sizeof(char *)); /* Réallocation mémoire */
+            if (!reallocated_words) /* Vérification de la réallocation */
+            {
+                perror("Erreur de réallocation mémoire");
+                /* Libération de toute la mémoire allouée en cas d'échec */
+                while (word_count > 0)
+                    free(words[--word_count]);
+                free(words);
+                return (NULL);
+            }
+            words = reallocated_words; /* Mise à jour du tableau avec la nouvelle mémoire */
+        }
+
+        current_word = strtok(NULL, " "); /* Extraction du mot suivant */
+    }
+
+    words[word_count] = NULL; /* Ajout de NULL à la fin pour marquer la fin du tableau */
+    return (words); /* Retour du tableau de mots */
 }
