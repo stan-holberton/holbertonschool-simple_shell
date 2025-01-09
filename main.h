@@ -9,11 +9,12 @@
 #include <sys/wait.h>
 #include <errno.h>
 
-/* Déclaration explicite de environ */
 extern char **environ;
 
-/* Prototypes */
 int execute(char **args);
 char **split_line(char *line);
+char *check_access(char *cmd);
+int builtin_exit(char **args);
+char *find_in_path(char *cmd);
 
-#endif /* MAIN_H */
+#endif
