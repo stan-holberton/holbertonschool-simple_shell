@@ -1,0 +1,69 @@
+# HSH(1) User Manual
+
+## NAME
+`hsh` - simple interactive shell
+
+## SYNOPSIS
+```
+hsh
+```
+
+## DESCRIPTION
+**hsh** is a simple shell written in C that provides a basic command-line interface for executing commands. It allows command execution with arguments and supports both interactive and non-interactive modes.
+
+## MODES OF OPERATION
+
+### Interactive Mode
+The shell displays a `$` prompt and waits for user commands.
+
+### Non-Interactive Mode
+Commands can be piped to the shell.
+
+## OPTIONS
+The shell currently does not accept command-line options.
+
+## FEATURES
+* Displays a prompt and waits for commands
+* Executes commands with their arguments
+* Handles absolute and relative paths
+* Reads commands from a file
+* Basic error handling
+
+## EXAMPLES
+
+### Interactive Mode
+```bash
+$ ./hsh
+$ ls -l
+$ pwd
+$ exit
+```
+
+### Non-Interactive Mode
+```bash
+$ echo "ls -l" | ./hsh
+```
+
+## EXIT STATUS
+* **0**: Successful execution
+* **127**: Command not found
+* **-1**: Execution error
+
+## ENVIRONMENT
+The shell uses the system's environment variables.
+
+## BUGS
+No known bugs at this time.
+
+## AUTHOR
+This shell was developed as an educational project.
+
+## SEE ALSO
+* sh(1)
+* bash(1)
+
+---
+**Version:** 1.0  
+**Date:** January 2025  
+**Manual Section:** 1  
+**Description:** HSH User Manual
