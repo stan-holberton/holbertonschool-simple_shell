@@ -11,6 +11,9 @@ The **Simple Shell** project is a basic implementation of a Unix shell written i
 - Reads commands from a file
 - Handles built-in commands such as `exit`
 
+- ## Flowchart
+- ![Flowchart](https://raw.githubusercontent.com/stan-holberton/holbertonschool-simple_shell/7caa66304a071441ba6c3a0d1479dab15db8a6cd/e3a08b68-f5b2-4005-a5fe-4fad4a1634f9.svg)
+
 ## Requirements
 - **Operating System**: Linux
 - **Compiler**: GCC, compatible with the flags `-Wall`, `-Werror`, `-Wextra`, `-pedantic`
@@ -45,5 +48,3 @@ Example:
 - `splitline.c`: Implements `split_line` to divide user input into an array of arguments
 - `AUTHORS`: Lists the contributors to the project
 
-- ### Flowchart
-- ![Flowchart](https://raw.githubusercontent.com/stan-holberton/holbertonschool-simple_shell/7caa66304a071441ba6c3a0d1479dab15db8a6cd/e3a08b68-f5b2-4005-a5fe-4fad4a1634f9.svg)
