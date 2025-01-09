@@ -4,10 +4,10 @@
 #include "main.h"
 #define BUFFER_SIZE 64
 /**
- * split_line - Divise une chaîne en un tableau de mots.
- * @line: La chaîne à diviser.
+ * split_line - Splits a string into an array of words.
+ * @line: The string to split.
  *
- * Return: Un tableau de pointeurs vers les mots, terminé par NULL.
+ * Return: An array of pointers to the words, terminated by NULL.
  */
 char **split_line(char *line)
 {
