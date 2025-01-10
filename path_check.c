@@ -1,52 +1,56 @@
 #include "main.h"
+#include <unistd.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 /**
  * check_access - Checks if a command is executable
  * @cmd: The command to check
+ *
  * Return: Duplicated string if executable, NULL otherwise
  */
 char *check_access(char *cmd)
 {
-    if (!cmd)
-        return (NULL);
+	if (!cmd)
+		return (NULL);
 
-    if (access(cmd, X_OK) == 0)
-        return (strdup(cmd));
+	if (access(cmd, X_OK) == 0)
+		return (strdup(cmd));
 
-    return (NULL);
+	return (NULL);
 }
 
 /**
  * find_in_path - Finds command in PATH
  * @cmd: Command to locate
+ *
  * Return: Full path if found, NULL otherwise
  */
 char *find_in_path(char *cmd)
 {
-    char *path_env, *path_copy, *dir, *full_path;
-    size_t path_len;
+	char *path_env, *path_copy, *dir, *full_path;
+	size_t path_len;
 
-    if (!cmd)
-        return (NULL);
+	if (!cmd)
+		return (NULL);
 
-    full_path = check_access(cmd);
-    if (full_path)
-        return (full_path);
+	full_path = check_access(cmd);
+	if (full_path)
+		return (full_path);
 
-    path_env = getenv("PATH");
-    if (!path_env)
-        return (NULL);
+	path_env = getenv("PATH");
+	if (!path_env)
+		return (NULL);
 
-    path_copy = strdup(path_env);
-    if (!path_copy)
-        return (NULL);
+	path_copy = strdup(path_env);
+	if (!path_copy)
+		return (NULL);
 
-    dir = strtok(path_copy, ":");
-    while (dir)
-    {
-        path_len = strlen(dir) + strlen(cmd) + 2;
-        full_path = malloc(path_len);
-        if (!full_path)
+	dir = strtok(path_copy, ":");
+	while (dir)
+	{
+		path_len = strlen(dir) + strlen(cmd) +
         {
             free(path_copy);
             return (NULL);

@@ -19,8 +19,8 @@ extern char **environ;
  */
 typedef struct builtin_s
 {
-    char *name;
-    int (*func)(char **);
+	char *name;
+	int (*func)(char **);
 } builtin_t;
 
 /* Function prototypes */
