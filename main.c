@@ -50,11 +50,12 @@ int main(void)
         builtin_status = execute_builtin(args);
         if (builtin_status != 1)
         {
-            if (builtin_status == -1)
-                continue;
+            status = builtin_status;
             for (i = 0; args[i]; i++)
                 free(args[i]);
             free(args);
+            if (builtin_status == -1)
+                break;
             continue;
         }
 
@@ -62,13 +63,20 @@ int main(void)
         if (cmd_path)
         {
             free(args[0]);
-        status = execute(args);
+            args[0] = cmd_path;  /* Replace original command with full path */
+            status = execute(args);
+        }
+        else
+        {
+            write(STDERR_FILENO, args[0], strlen(args[0]));
+            write(STDERR_FILENO, ": command not found\n", 20);
+            status = 127;
+        }
+
         for (i = 0; args[i]; i++)
             free(args[i]);
         free(args);
     }
-    return (0);
-        free(args);
-    }
-    return (0);
+    free(input);
+    return status;
 }
