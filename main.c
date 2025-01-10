@@ -1,62 +1,74 @@
+#include "main.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <unistd.h>
-#include "main.h"
+#include <string.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <errno.h>
 
 #define PROMPT "$ "
 
+
 /**
- * main - Main function of a simple command-line interpreter (shell)
- *
- * This function implements a basic shell that:
- * - Displays a prompt in interactive mode
- * - Reads user input
- * - Processes the commands
- * - Executes them
- * - Repeats until exit
- *
+ * main - Main function of the shell
  * Return: 0 on successful execution
  */
 int main(void)
 {
-	char *userInput = NULL;/* Stores the user's input string */
-	size_t inputBufferSize = 0;/* Size of the input buffer */
-	ssize_t bytesRead;/* Number of bytes read from input */
-	char **commandArguments;/* Array of command arguments */
-	size_t argIndex;/* Index for freeing command arguments */
-	int interactive;/* Flag for interactive mode */
+    char *input = NULL;
+    size_t bufsize = 0;
+    ssize_t chars_read;
+    char **args;
+    int status = 0, builtin_status;
+    size_t i;
+    int interactive = isatty(STDIN_FILENO);
+    char *cmd_path;
 
-	/* Check if the shell is in interactive mode */
-	interactive = isatty(STDIN_FILENO);
+    while (1)
+    {
+        if (interactive)
+            write(STDOUT_FILENO, PROMPT, 2);
 
-	while (1)
-	{
-		/* Display prompt only in interactive mode */
-		if (interactive)
-			write(STDOUT_FILENO, PROMPT, strlen(PROMPT));
-		bytesRead = getline(&userInput, &inputBufferSize, stdin);
-		/* Handle EOF (Ctrl+D) or error in input */
-		if (bytesRead == -1)
-		{
-			free(userInput);
-			if (interactive)
-				write(STDOUT_FILENO, "\n", 1);
-			break;
-		}
-		/* Remove trailing newline character */
-		userInput[strcspn(userInput, "\n")] = '\0';
-		if (strlen(userInput) == 0)
-			continue;
-		/* Split the input line into command and arguments */
-		commandArguments = split_line(userInput);
-		if (!commandArguments)
-			continue;
-		execute(commandArguments);
-		/* Clean up allocated memory for command arguments */
-		for (argIndex = 0; commandArguments[argIndex] != NULL; argIndex++)
-			free(commandArguments[argIndex]);
-		free(commandArguments);
-	}
-return (0);
+        chars_read = getline(&input, &bufsize, stdin);
+        if (chars_read == -1)
+        {
+            free(input);
+            if (interactive)
+                write(STDOUT_FILENO, "\n", 1);
+            exit(status);
+        }
+
+        input[strcspn(input, "\n")] = '\0';
+        if (strlen(input) == 0)
+            continue;
+
+        args = split_line(input);
+        if (!args)
+            continue;
+
+        builtin_status = execute_builtin(args);
+        if (builtin_status != 1)
+        {
+            if (builtin_status == -1)
+                continue;
+            for (i = 0; args[i]; i++)
+                free(args[i]);
+            free(args);
+            continue;
+        }
+
+        cmd_path = find_in_path(args[0]);
+        if (cmd_path)
+        {
+            free(args[0]);
+        status = execute(args);
+        for (i = 0; args[i]; i++)
+            free(args[i]);
+        free(args);
+    }
+    return (0);
+        free(args);
+    }
+    return (0);
 }

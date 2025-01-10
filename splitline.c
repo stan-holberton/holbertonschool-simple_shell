@@ -1,43 +1,46 @@
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
 #include "main.h"
+
 #define BUFFER_SIZE 64
+
 /**
- * split_line - Splits a string into an array of words.
- * @line: The string to split.
- *
- * Return: An array of pointers to the words, terminated by NULL.
+ * split_line - Splits a string into an array of words
+ * @line: The string to split
+ * Return: Array of strings, NULL on failure
  */
 char **split_line(char *line)
 {
-	char **words = NULL, *word;
-	size_t count = 0, size = BUFFER_SIZE;
-words = malloc(size * sizeof(char *));
+    char **tokens = NULL;
+    char *token;
+    size_t count = 0, size = BUFFER_SIZE;
 
-	if (!words)
-		return (NULL);
-	word = strtok(line, " ");
-	while (word)
-	{
-		words[count] = strdup(word);
-		if (!words[count])
-		{
-			while (count > 0)
-				free(words[--count]);
-			free(words);
-			return (NULL);
-}
-		count++;
-		if (count >= size)
-		{
-			size += BUFFER_SIZE;
-			words = realloc(words, size * sizeof(char *));
-			if (!words)
-				return (NULL);
-	}
-		word = strtok(NULL, " ");
-	}
-	words[count] = NULL;
-	return (words);
+    if (!line)
+        return (NULL);
+
+    tokens = malloc(size * sizeof(char *));
+    if (!tokens)
+        return (NULL);
+
+    token = strtok(line, " \t\r\n\a");
+    while (token)
+    {
+        tokens[count] = strdup(token);
+        if (!tokens[count])
+        {
+            while (count > 0)
+                free(tokens[--count]);
+            free(tokens);
+            return (NULL);
+        }
+        count++;
+        if (count >= size)
+        {
+            size += BUFFER_SIZE;
+            tokens = realloc(tokens, size * sizeof(char *));
+            if (!tokens)
+                return (NULL);
+        }
+        token = strtok(NULL, " \t\r\n\a");
+    }
+    tokens[count] = NULL;
+    return (tokens);
 }
