@@ -50,12 +50,14 @@ char *find_in_path(char *cmd)
 	dir = strtok(path_copy, ":");
 	while (dir)
 	{
-		path_len = strlen(dir) + strlen(cmd) +
-        {
-            free(path_copy);
-            return (NULL);
-        }
-        snprintf(full_path, path_len, "%s/%s", dir, cmd);
+		path_len = strlen(dir) + strlen(cmd) + 2;
+		full_path = malloc(path_len);
+		if (!full_path)
+		{
+			free(path_copy);
+			return (NULL);
+		}
+		snprintf(full_path, path_len, "%s/%s", dir, cmd);
         if (access(full_path, X_OK) == 0)
         {
             free(path_copy);
